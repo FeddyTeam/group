@@ -1,0 +1,24 @@
+extends layout
+
+block title
+    title LOGIN
+
+block main
+    .row
+        .col.hide-tablet
+        .col
+            .cards
+                .card
+                    h2.card-header LOGIN
+                    .card-body
+                        form(action="/login" method="post")
+                            .row
+                                label Username
+                                input(type="text" name="username")
+                            .row
+                                label Password
+                                input(type="password" name="password")
+                            .row
+                                input(type="submit" value="Login")
+        .col.hide-tablet
+

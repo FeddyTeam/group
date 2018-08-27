@@ -1,0 +1,38 @@
+extends layout
+
+block main
+    .row
+        .col
+        .col
+            for bubble in bubbles
+                .bubble
+                    .bubble-header
+                        .bubble-header__icon
+                            img(src=user.profile)
+                        .bubble-header__username
+                            a= user.username
+                        .bubble-header__date
+                            span= bubble.createdAt.toLocaleDateString()
+                    .bubble-body
+
+                        if bubble.type == 'html'
+                            div!= bubble.text
+                        else
+                            p!= bubble.text
+                        div
+                    //- .bubble-footer
+                    //-     for comment in bubble.comments
+                    //-         .comment
+                    //-             a= comment.user.username
+                    //-             p= comment.content
+        .col
+            .card
+                .card-body
+                    form
+                        .row
+                            label CONTENT:
+                            textarea(cols="30", rows="10")
+                        .row
+                            label TYPE: TEXT / GROUP
+                        .row
+                            input(type="submit" value="SEND")
