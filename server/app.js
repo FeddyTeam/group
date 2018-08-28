@@ -2,6 +2,10 @@ const Koa = require('koa')
 const logger = require('koa-logger')
 const favicon = require('koa-favicon')
 const static = require('koa-static')
+const { ApolloServer } = require('apollo-server-koa')
+const schema = require('./apollo')
+const server = new ApolloServer(schema)
+
 
 // APP
 const app = new Koa()
@@ -41,6 +45,8 @@ const router = require('./routes')({
 app
     .use(router.routes())
     .use(router.allowedMethods())
+
+server.applyMiddleware({ app, path: '/gq'})
 
 // SERVER UP
 app.listen(3000)
