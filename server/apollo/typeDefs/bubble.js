@@ -3,23 +3,30 @@ const { gql } = require('apollo-server')
 const Bubble = gql`
     type Bubble {
         id: ID!
+        createdAt: String
+        updatedAt: String
+
         type: BubbleType
         status: BubbleStatus
         text: String
+        cover: String
+        link: String
         user: User
-        userID: ID
         comments: [Comment]
+    }
+
+    type BubblePage {
+        hasMore: Boolean
+        bubbles: [Bubble]
     }
 
     input BubbleInput {
         type: BubbleType
         text: String
-        userId: ID
     }
 
     extend type Query {
-        getBubble(id: ID!): Bubble,
-        getBubbles: [Bubble],
+        getBubblesPage(skip: Int = 0, count: Int = 12): BubblePage
     }
 
     extend type Mutation {
@@ -27,16 +34,15 @@ const Bubble = gql`
     }
 
     enum BubbleStatus {
-        private
-        group
-        public
+        pending
+        actived
+        locked
+        deleted
     }
     enum BubbleType {
         text
-        link
+        embed
         photo
-        file
-        html
     }
 `
 

@@ -1,28 +1,22 @@
 const passport = require('koa-passport')
 const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcrypt')
-const { User } = require('../../models')
+const _ = require('lodash')
+const { User } = require('../../db')
 
 passport.use(new LocalStrategy(
-    function (username, password, done) {
-        console.log(arguments)
+    async function (username, password, done) {
+        const _user = await User.where('email', username).fetch()
+        if (_.isEmpty(_user)) {
+            return done(null, false)
+        }
 
-        User.findOne({ where: {
-            email: username
-        }}).then(user => {
+        const user = _user.toJSON()
 
-            if (!user) {
-                return done(null, false)
-            }
-
-            bcrypt.compare(password, user.password).then(result => {
-                return done(null, user)
-            }).catch(err => {
-                return done(null, false)
-            })
-
+        bcrypt.compare(password, user.password).then(result => {
+            return done(null, user)
         }).catch(err => {
-            return done(err)
+            return done(null, false)
         })
     }
 ))

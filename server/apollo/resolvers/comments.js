@@ -1,29 +1,45 @@
-const { Comment } = require('../../models')
+const { Comment, User } = require('../../db')
 
 const resolver = {
-    Comment: {},
-    Query: {
-        getComments(root, { bubbleId }, context, info) {
-            const options = {
-                where: {
-                    bubbleId: bubbleId
-                }, include: [{
-                    model: User,
-                    as: 'user'
-                }]
+    Comment: {
+        async user({ userId, user }) {
+            if (user) {
+                return user
             }
 
-            return Comment.findAll(options)
+            const _user = await User.where('id', userId).fetch()
+            return _user.toJSON()
         },
-        getComment: (root, { id }, context, info) => Comment.findById(id, {
-            include: [{
-                model: User,
-                as: 'user'
-            }, {
-                model: Comment,
-                as: 'comments',
-            }]
-        })
+    },
+    Query: {
+        async getComments(root, { bubbleId, skip, count }, context, info) {
+            const results = await Comment
+                .where('status', 'actived')
+                .where('bubbleId', bubbleId)
+                .query(qb => qb.offset(skip).limit(count))
+                .orderBy('-createdAt')
+                .fetchAll({
+                    withRelated: ['user']
+                })
+
+            return results.toJSON()
+        },
+    },
+    Mutation: {
+        async createComment(root, { comment: { bubbleId, content } }, ctx, info) {
+            if (ctx.isUnauthenticated()) {
+                return null
+            }
+
+            const userId = ctx.state.user.id
+            const _comment = await Comment.forge({
+                content,
+                bubbleId,
+                userId,
+            }).save()
+
+            return _comment.toJSON()
+        }
     }
 }
 
