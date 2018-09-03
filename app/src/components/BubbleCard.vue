@@ -17,6 +17,14 @@
             {{bubble.text}}
         </md-card-content>
 
+        <md-card-media v-show="data.photos">
+            <div class="photo-box">
+                <md-content class="photo-box__photo" v-for="photo in data.photos">
+                    <img :src="photo.src" alt="Cover">
+                </md-content>
+            </div>
+        </md-card-media>
+
         <md-card-actions>
             <md-button v-if="u.commentsVisible" @click="hideComments">HIDE COMMENTS</md-button>
             <md-button v-else @click="loadComments">LOAD COMMENTS</md-button>
@@ -54,6 +62,17 @@
                     commentsVisible: false
                 },
                 comments: []
+            }
+        },
+        computed: {
+            data () {
+                if (this.bubble.data) {
+                    return JSON.parse(this.bubble.data)
+                } else {
+                    return {
+                        photos: []
+                    }
+                }
             }
         },
         methods: {

@@ -7,9 +7,6 @@ import { ApolloClient } from 'apollo-client'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
-// muse-ui
-// import MuseUI from 'muse-ui'
-// import 'muse-ui/dist/muse-ui.css'
 // vue-material
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
@@ -22,7 +19,7 @@ import '@/styles/index.css'
 
 const httpLink = new HttpLink({
     // You should use an absolute URL here
-    uri: 'http://localhost:3000/gq',
+    uri: 'http://localhost:3000/graphql',
     credentials: 'include'
 })
 
@@ -37,11 +34,32 @@ const apolloProvider = new VueApollo({
 })
 
 Vue.use(VueApollo)
-// Vue.use(MuseUI)
 Vue.use(VueMaterial)
 Vue.use(VueSimplemde)
 
 Vue.config.productionTip = false
+
+Vue.mixin({
+    computed: {
+        g () {
+            const hostname = document.location.hostname
+            const dev = hostname === 'localhost'
+            const host = dev ? `${hostname}:3000` : hostname
+            const protocol = dev ? 'http:' : 'https:'
+
+            return {
+                dev,
+                qiniu: {
+                    domains: {
+                        'https': 'https://upload-z2.qiniup.com',
+                        'http': 'http://upload-z2.qiniup.com'
+                    },
+                    tokenUrl: `${protocol}//${host}/k/qiniu`
+                }
+            }
+        }
+    }
+})
 
 /* eslint-disable no-new */
 new Vue({

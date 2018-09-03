@@ -10,3 +10,23 @@
 .md-app-drawer {
     width: 240px;
 }
+
+
+.photo-box {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.photo-box__photo {
+    flex: 1;
+    min-width: 20%;
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+.photo-box__photo img {
+    max-height: 50vh;
+    max-width: 100%;
+}

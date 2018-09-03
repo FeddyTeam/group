@@ -25,7 +25,8 @@
 
 <script>
 import { GET_BUBBLES_PAGE } from '@/graphql'
-import BubbleMaker from '@/components/BubbleMaker'
+// import BubbleMaker from '@/components/BubbleMaker'
+import BubbleMaker from '@/components/BubbleWriter'
 import BubbleCard from '@/components/BubbleCard'
 
 export default {

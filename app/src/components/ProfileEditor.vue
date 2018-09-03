@@ -3,9 +3,10 @@
         <div class="md-card-header">EDIT PROFILE</div>
         <md-divider></md-divider>
         <div class="md-card-content">
-
-            <image-uploader></image-uploader>
-
+            <avatar-editor :url="profile.avatar" :set-url="updateAvatar"></avatar-editor>
+        </div>
+        <md-divider></md-divider>
+        <div class="md-card-content">
             <md-field>
                 <label>Email</label>
                 <md-input @change="event => setFormValues('email', event)" :value="profile.email"></md-input>
@@ -42,7 +43,7 @@
 
 <script>
 import { GET_PROFILE, UPDATE_PROFILE } from '@/graphql'
-import ImageUploader from '@/components/ImageUploader'
+import AvatarEditor from '@/components/AvatarEditor'
 
 export default {
     data () {
@@ -52,7 +53,8 @@ export default {
             },
             form: {
                 name: '',
-                bio: ''
+                bio: '',
+                avatar: ''
             },
             message: {
                 position: 'left',
@@ -63,7 +65,7 @@ export default {
     },
     computed: {
         preparedForm () {
-            const keys = ['email', 'name', 'bio', 'url']
+            const keys = ['name', 'bio', 'url', 'avatar']
             const { id } = this.profile
             const birthday = this.$refs.birthdayPicker.selectedDate.toJSON() || this.profile.birthday
             const results = {
@@ -79,6 +81,9 @@ export default {
         }
     },
     methods: {
+        updateAvatar (avatarUrl) {
+            this.form.avatar = avatarUrl
+        },
         async updateProfile () {
             await this.$apollo.mutate({
                 mutation: UPDATE_PROFILE,
@@ -112,7 +117,7 @@ export default {
         }
     },
     components: {
-        'image-uploader': ImageUploader
+        'avatar-editor': AvatarEditor
     },
     apollo: {
         profile: {

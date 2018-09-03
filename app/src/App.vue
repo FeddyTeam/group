@@ -28,6 +28,13 @@
                             </md-list-item>
                         </router-link>
 
+                        <router-link tag="md-list-item" to="/cms">
+                            <md-list-item>
+                                <md-icon>subject</md-icon>
+                                <span class="md-list-item-text">CMS</span>
+                            </md-list-item>
+                        </router-link>
+
                         <router-link tag="md-list-item" to="/login">
                             <md-list-item>
                                 <md-icon>account_circle</md-icon>
