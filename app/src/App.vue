@@ -59,6 +59,11 @@ export default {
         return {
             menuVisible: true
         }
+    },
+    computed: {
+        keys () {
+            return this.$jwt.keys
+        }
     }
 }
 </script>

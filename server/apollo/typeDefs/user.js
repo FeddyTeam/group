@@ -7,6 +7,19 @@ const User = gql`
 
     type Mutation {
         updateProfile(profile: ProfileInput!): Profile
+        login(form: LoginInput): LoginResult
+    }
+
+    input LoginInput {
+        username: String
+        password: String
+        code: Int
+    }
+
+    type LoginResult {
+        token: String
+        user: User
+        message: String
     }
 
     type User {

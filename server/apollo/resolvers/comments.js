@@ -27,8 +27,9 @@ const resolver = {
     },
     Mutation: {
         async createComment(root, { comment: { bubbleId, content } }, ctx, info) {
-            if (ctx.isUnauthenticated()) {
-                return null
+            const { id } = await check({ ctx, want: 'abc_create' })
+            if (isEmpty(id)) {
+                throw new Error('401@abc_create')
             }
 
             const userId = ctx.state.user.id

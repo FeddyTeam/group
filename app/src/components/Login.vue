@@ -32,6 +32,7 @@
 </template>
 
 <script>
+    import { LOGIN } from '@/graphql'
     import { validationMixin } from 'vuelidate'
     import {
         required,
@@ -43,7 +44,8 @@
             return {
                 form: {
                     username: '',
-                    password: ''
+                    password: '',
+                    code: 0
                 },
                 message: {
                     duration: 3000,
@@ -54,22 +56,22 @@
             }
         },
         methods: {
-            async doLogin () {
-                const response = await fetch('http://localhost:3000/login_ajax', {
-                    method: 'POST',
-                    credentials: 'include',
-                    body: JSON.stringify(this.form),
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
+            async login () {
+                const results = await this.$apollo.mutate({
+                    mutation: LOGIN,
+                    variables: { form: this.form }
                 })
 
-                if (response.ok) {
-                    sessionStorage.setItem('__', response.token)
-                    this.showMessage()
+                const { authed: { token, user, message } } = results.data
+                if (token && user) {
+                    this.showMessage('SUCCESSFULLY LOGINED')
+                    localStorage.setItem('token', token)
+                    this.$jwt.setToken(token)
+                    this.$router.replace('/')
+                    // TODO: UPDTAE PROFILE
                 } else {
-                    this.clearForm()
+                    this.showMessage(`SOMTHING WRONG - ${message}`)
+                    console.error(results.error)
                 }
             },
             showMessage () {
@@ -78,7 +80,7 @@
             validateForm () {
                 this.$v.$touch()
                 if (!this.$v.$invalid) {
-                    this.doLogin()
+                    this.login()
                 }
             },
             clearForm () {
@@ -110,9 +112,3 @@
         }
     }
 </script>
-
-<style lang="css">
-    .login-form {
-        min-height: 80vh;
-    }
-</style>

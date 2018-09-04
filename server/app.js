@@ -6,13 +6,22 @@ const static = require('koa-static')
 const { ApolloServer } = require('apollo-server-koa')
 const schema = require('./apollo')
 const server = new ApolloServer(schema)
+const path = require('path')
+
+// const jwt = require('koa-jwt')
 
 // APP
 const app = new Koa()
 
 app.use(logger())
 
-app.use(favicon('./public/logo.png'))
+app.use(favicon(path.join(__dirname, 'public/logo.png')))
+
+// app.use(jwt({
+//     secret: 'you guess ???'
+// }).unless({
+//     path: [/\/$/, /^\/(login|login_ajax|styles|images|favicon)/]
+// }))
 
 // VIEWS
 const views = require('koa-views')
@@ -25,7 +34,7 @@ app.use(async (ctx, next) => {
     ctx.set('Access-Control-Allow-Origin', 'http://localhost:8080')
     ctx.set('Access-Control-Allow-Credentials', true)
     ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-    ctx.set('Access-Control-Allow-Methods', 'POST, OPTIONS, PUT')
+    ctx.set('Access-Control-Allow-Methods', 'POST, OPTIONS, PUT, GET')
     await next()
 })
 
@@ -48,7 +57,7 @@ app.use(static('./server/public'))
 
 // ROUTES
 const router = require('./routes')({
-    passport,
+    passport, cfg
 })
 app
     .use(router.routes())

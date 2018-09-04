@@ -11,6 +11,7 @@ const Bubble = gql`
         text: String
         cover: String
         link: String
+        data: String
         user: User
         comments: [Comment]
     }
@@ -23,6 +24,7 @@ const Bubble = gql`
     input BubbleInput {
         type: BubbleType
         text: String
+        data: String
     }
 
     extend type Query {

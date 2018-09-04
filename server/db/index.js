@@ -39,6 +39,15 @@ const Comment = bookshelf.Model.extend({
     }
 })
 
+const News = bookshelf.Model.extend({
+    tableName: 'news',
+    uuid: true,
+    hasTimestamps: ['createdAt', 'updatedAt', 'activedAt'],
+    user() {
+        return this.belongsTo(User, 'userId')
+    }
+})
+
 module.exports = {
-    User, Bubble, Comment
+    User, Bubble, Comment, News, knex
 }

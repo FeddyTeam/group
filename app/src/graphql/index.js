@@ -207,3 +207,17 @@ export const FETCH_NEWS = gql`query ($type: NewsType!, $skip: Int, $count: Int) 
         }
     }
 }`
+
+export const LOGIN = gql`mutation ($form: LoginInput!) {
+    authed: login (form: $form) {
+        message,
+        token,
+        user {
+            id,
+            email
+            name,
+            username,
+            avatar
+        }
+    }
+}`
