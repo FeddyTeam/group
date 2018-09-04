@@ -25,8 +25,8 @@
             </md-card>
         </form>
 
-        <md-snackbar :md-position="message.position" :md-duration="message.duration" :md-active.sync="message.show" md-persistent>
-            <span>登录成功！</span>
+        <md-snackbar md-position="left" :md-active.sync="u.messageVisiblity" md-persistent>
+            <span>{{u.messageContent}}</span>
         </md-snackbar>
     </div>
 </template>
@@ -47,46 +47,27 @@
                     password: '',
                     code: 0
                 },
-                message: {
-                    duration: 3000,
-                    position: 'left',
-                    show: false,
-                    content: ''
+                u: {
+                    messageVisiblity: false,
+                    messageContent: ''
                 }
             }
         },
         methods: {
-            async login () {
-                const results = await this.$apollo.mutate({
-                    mutation: LOGIN,
-                    variables: { form: this.form }
-                })
-
-                const { authed: { token, user, message } } = results.data
-                if (token && user) {
-                    this.showMessage('SUCCESSFULLY LOGINED')
-                    localStorage.setItem('token', token)
-                    this.$jwt.setToken(token)
-                    this.$router.replace('/')
-                    // TODO: UPDTAE PROFILE
-                } else {
-                    this.showMessage(`SOMTHING WRONG - ${message}`)
-                    console.error(results.error)
-                }
+            clearForm () {
+                this.$v.$reset()
+                this.form.username = null
+                this.form.password = null
             },
-            showMessage () {
-                this.message.show = true
+            showMessage (message) {
+                this.u.messageContent = message
+                this.u.messageVisiblity = true
             },
             validateForm () {
                 this.$v.$touch()
                 if (!this.$v.$invalid) {
                     this.login()
                 }
-            },
-            clearForm () {
-                this.$v.$reset()
-                this.form.username = null
-                this.form.password = null
             },
             getValidationClass (fieldName) {
                 const field = this.$v.form[fieldName]
@@ -95,6 +76,28 @@
                     return {
                         'md-invalid': field.$invalid && field.$dirty
                     }
+                }
+            },
+            async login () {
+                try {
+                    const results = await this.$apollo.mutate({
+                        mutation: LOGIN,
+                        variables: { form: this.form }
+                    })
+
+                    const { authed: { token, user, message } } = results.data
+                    if (token && user) {
+                        this.showMessage('SUCCESSFULLY LOGINED')
+                        localStorage.setItem('token', token)
+                        this.$jwt.setToken(token)
+                        this.$router.replace('/')
+                        // TODO: UPDTAE PROFILE
+                    } else {
+                        this.showMessage(`SOMTHING WRONG - ${message}`)
+                        console.error(results.error)
+                    }
+                } catch (e) {
+                    this.showMessage(`SOMTHING WRONG - ${e.message}`)
                 }
             }
         },

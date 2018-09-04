@@ -3,10 +3,12 @@ const { gql } = require('apollo-server')
 const User = gql`
     type Query {
         getProfile: Profile
+        fetchUsers: [User]
     }
 
     type Mutation {
         updateProfile(profile: ProfileInput!): Profile
+        updatePassword(passwords: PasswordInput!): Boolean
         login(form: LoginInput): LoginResult
     }
 
@@ -14,6 +16,11 @@ const User = gql`
         username: String
         password: String
         code: Int
+    }
+
+    input PasswordInput {
+        password: String!
+        newPassword: String!
     }
 
     type LoginResult {

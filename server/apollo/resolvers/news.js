@@ -1,6 +1,8 @@
 const { News, User, knex } = require('../../db')
 const _ = require('lodash')
 
+const check = require('./../../lib/check')
+
 const _fetchNews = async ({ types, type, skip = 0, count = 32 }) => {
 
     let options = {}

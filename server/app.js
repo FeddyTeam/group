@@ -47,17 +47,17 @@ app.use(session({}, app))
 const bodyParser = require('koa-bodyparser')
 app.use(bodyParser())
 
-// PASSPORT
-const passport = require('./lib/passport')
-app.use(passport.initialize())
-app.use(passport.session())
+// // PASSPORT
+// const passport = require('./lib/passport')
+// app.use(passport.initialize())
+// app.use(passport.session())
 
 // STATIC FILES
 app.use(static('./server/public'))
 
 // ROUTES
 const router = require('./routes')({
-    passport, cfg
+    cfg
 })
 app
     .use(router.routes())

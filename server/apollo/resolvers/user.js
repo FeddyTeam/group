@@ -11,18 +11,37 @@ const resolvers = {
 
     },
     Query: {
-        async getProfile(root, _, ctx, info) {
-            const { id } = await check({ ctx })
-            if (isEmpty(id)) {
-                throw new Error('401@profile_fetch')
+        async fetchUsers(root, _, ctx, info) {
+            try {
+                const { id } = await check({ ctx })
+                if (isEmpty(id)) {
+                    throw new Error('401@users_fetch')
+                }
+
+                const results = await User.fetchAll()
+
+                return results.toJSON()
+            } catch (e) {
+                throw new Error(e)
             }
+        },
 
-            const results = await User
-                .where('id', id)
-                .where('status', 'actived')
-                .fetch()
+        async getProfile(root, _, ctx, info) {
+            try {
+                const { id } = await check({ ctx })
+                if (isEmpty(id)) {
+                    throw new Error('401@profile_fetch')
+                }
 
-            return results.toJSON()
+                const results = await User
+                    .where('id', id)
+                    .where('status', 'actived')
+                    .fetch()
+
+                return results.toJSON()
+            } catch (e) {
+                throw new Error(e)
+            }
         }
     },
     Mutation: {
@@ -45,11 +64,41 @@ const resolvers = {
 
                 return _user.toJSON()
             } catch (e) {
-                throw new Error({
-                    message: '11111111111111111111111111111111'
-                })
-                console.error(e)
-                return null
+                throw new Error(e)
+            }
+        },
+
+        async updatePassword(root, { passwords }, ctx, info) {
+            try {
+                const { id } = await check({ ctx })
+                if (isEmpty(id)) {
+                    throw new Error('401@password_update')
+                }
+
+                const { password, newPassword } = passwords
+                const _user = await User
+                    .where('id', id)
+                    .fetch()
+
+                if (isEmpty(_user)) {
+                    throw new Error('user_not_found@password_update')
+                }
+                const user = _user.toJSON()
+
+                const result = await bcrypt.compare(password, user.password)
+                if (!result) {
+                    throw new Error('wrong_password@password_update')
+                }
+
+                const hashedPassword = await bcrypt.hashSync(newPassword, 6)
+
+                await _user.set({
+                    password: hashedPassword
+                }).save()
+
+                return true
+            } catch (e) {
+                throw new Error(e)
             }
         },
 

@@ -35,13 +35,13 @@
                 </md-card-content>
                 <md-divider></md-divider>
                 <md-card-actions>
-                    <md-button>EDIT YOUR PROFILE</md-button>
+                    <router-link tag="md-button" to="/profile/password">UPDATE YOUR PASSWORD</router-link>
+                    <router-link tag="md-button" to="/profile/edit">EDIT YOUR PROFILE</router-link>
                 </md-card-actions>
             </md-card>
         </div>
 
         <div class="md-layout-item">
-            <profile-editor></profile-editor>
         </div>
     </div>
 </template>

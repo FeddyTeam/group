@@ -6,11 +6,11 @@ const qiniu = require('qiniu')
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 
-module.exports = function ({ passport, cfg }) {
-    const auth = passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    })
+module.exports = function ({ cfg }) {
+    // const auth = passport.authenticate('local', {
+    //     successRedirect: '/',
+    //     failureRedirect: '/login'
+    // })
 
     return router
         .get('/', async ctx => {
@@ -23,7 +23,7 @@ module.exports = function ({ passport, cfg }) {
             ctx.logout()
             ctx.redirect('/')
         })
-        .post('/login', auth)
+        // .post('/login', auth)
         .post('/login_ajax', async ctx => {
             const { username, password } = ctx.request.body
             try {

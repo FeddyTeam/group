@@ -1,5 +1,7 @@
 const { Bubble, User } = require('../../db')
 
+const check = require('./../../lib/check')
+
 const resolver = {
     Bubble: {
         async user({ userId, user }) {

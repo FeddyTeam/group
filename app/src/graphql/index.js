@@ -208,6 +208,19 @@ export const FETCH_NEWS = gql`query ($type: NewsType!, $skip: Int, $count: Int) 
     }
 }`
 
+export const FETCH_USERS = gql`query {
+    users: fetchUsers {
+        id,
+        email,
+        username,
+        name,
+        email,
+        avatar,
+        createdAt,
+        status
+    }
+}`
+
 export const LOGIN = gql`mutation ($form: LoginInput!) {
     authed: login (form: $form) {
         message,
@@ -220,4 +233,8 @@ export const LOGIN = gql`mutation ($form: LoginInput!) {
             avatar
         }
     }
+}`
+
+export const UPDATE_PASSWORD = gql`mutation ($passwords: PasswordInput!) {
+    updatePassword (passwords: $passwords)
 }`

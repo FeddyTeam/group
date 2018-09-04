@@ -5,11 +5,18 @@ import JwtMgr from '@/lib/jwt-mgr'
 import CMSIndex from '@/components/CMS_Index'
 import ViewBubbles from '@/components/ViewBubbles'
 import ViewProfile from '@/components/ViewProfile'
+import ProfileEditor from '@/components/ProfileEditor'
+import PasswordEditor from '@/components/PasswordEditor'
 import ViewLogin from '@/components/ViewLogin'
 import ViewCMS from '@/components/ViewCMS'
 import NewsList from '@/components/NewsList'
 import NewsEditor from '@/components/NewsEditor'
 import Login from '@/components/Login'
+
+import ViewAdmin from '@/components/ViewAdmin'
+import AdminIndex from '@/components/Admin_Index'
+import AdminUsers from '@/components/Admin_Users'
+import UserEditor from '@/components/UserEditor'
 
 const jwt = new JwtMgr()
 
@@ -75,6 +82,35 @@ const router = new Router({
         path: '/profile',
         component: ViewProfile
     }, {
+        ...need.none,
+        path: '/profile/edit',
+        component: ProfileEditor
+    }, {
+        ...need.none,
+        path: '/profile/password',
+        component: PasswordEditor
+    }, {
+        ...need.adm,
+        path: '/manage',
+        component: ViewAdmin,
+        children: [{
+            ...need.adm,
+            path: '',
+            component: AdminIndex
+        }, {
+            ...need.adm,
+            path: '/manage/users',
+            component: AdminUsers
+        }, {
+            ...need.adm,
+            path: '/manage/users/edit',
+            component: UserEditor
+        }, {
+            ...need.adm,
+            path: '/manage/users/edit/:id',
+            component: UserEditor
+        }]
+    }, {
         ...need.cms,
         path: '/cms',
         component: ViewCMS,
@@ -134,6 +170,10 @@ router.beforeEach((to, from, next) => {
     const { lock } = to.meta
 
     if (lock) {
+        if (!jwt.keys) {
+            next(false)
+        }
+
         console.log('========================================')
         console.log(`Lock is ${lock.join(', ')}`)
         console.log(`My keys are ${Object.keys(jwt.keys).join(', ')}`)

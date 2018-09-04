@@ -1,5 +1,7 @@
 const { Comment, User } = require('../../db')
 
+const check = require('./../../lib/check')
+
 const resolver = {
     Comment: {
         async user({ userId, user }) {

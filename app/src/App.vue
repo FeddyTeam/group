@@ -14,30 +14,37 @@
                     </md-toolbar>
 
                     <md-list>
-                        <router-link tag="md-list-item" to="/bubbles">
+                        <router-link tag="md-list-item" to="/bubbles" v-show="keys.abc">
                             <md-list-item>
                                 <md-icon>mood</md-icon>
                                 <span class="md-list-item-text">Bubbles</span>
                             </md-list-item>
                         </router-link>
 
-                        <router-link tag="md-list-item" to="/profile">
+                        <router-link tag="md-list-item" to="/profile" v-show="keys">
                             <md-list-item>
                                 <md-icon>account_circle</md-icon>
                                 <span class="md-list-item-text">Profile</span>
                             </md-list-item>
                         </router-link>
 
-                        <router-link tag="md-list-item" to="/cms">
+                        <router-link tag="md-list-item" to="/cms" v-show="keys.cms">
                             <md-list-item>
                                 <md-icon>subject</md-icon>
                                 <span class="md-list-item-text">CMS</span>
                             </md-list-item>
                         </router-link>
 
+                        <router-link tag="md-list-item" to="/manage" v-show="keys.adm">
+                            <md-list-item>
+                                <md-icon>dashboard</md-icon>
+                                <span class="md-list-item-text">MANAGE</span>
+                            </md-list-item>
+                        </router-link>
+
                         <router-link tag="md-list-item" to="/login">
                             <md-list-item>
-                                <md-icon>account_circle</md-icon>
+                                <md-icon>lock_open</md-icon>
                                 <span class="md-list-item-text">Login</span>
                             </md-list-item>
                         </router-link>
@@ -57,13 +64,18 @@ export default {
     name: 'app',
     data () {
         return {
-            menuVisible: true
+            menuVisible: true,
+            keys: {}
         }
     },
-    computed: {
-        keys () {
-            return this.$jwt.keys
+    methods: {
+        updateKeys () {
+            this.$jwt.readToken()
+            this.keys = this.$jwt.keys
         }
+    },
+    created () {
+        this.updateKeys()
     }
 }
 </script>

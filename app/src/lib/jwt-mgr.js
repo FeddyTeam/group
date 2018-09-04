@@ -56,7 +56,14 @@ export default class JwtMgr {
     }
 
     get keys () {
-        return this.payload.keys || {}
+        return this.payload.keys || null
+    }
+
+    clear () {
+        this._token = ''
+        this._payload = {}
+        const { source, name } = this._opts
+        window[source].setItem(name, '')
     }
 
     setToken (token) {
