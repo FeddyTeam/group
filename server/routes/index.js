@@ -58,9 +58,25 @@ module.exports = function ({ cfg }) {
                 ctx.status = 500
             }
         })
-        .get('/k/qiniu', ctx => {
-            if (ctx.isUnauthenticated()) {
+        .get('/k/qiniu', async ctx => {
+            try {
+                const authorization = ctx.request.header.authorization
+                if (!authorization) {
+                    throw new Error('JWT: Authorization header not found')
+                }
+
+                const results = authorization.split(' ')
+                const type = results[0]
+                const token = results[1]
+
+                if (type !== 'Bearer') {
+                    throw new Error('JWT: Bearer type not found')
+                }
+
+                await jwt.verify(token, cfg.JWT_SECRET)
+            } catch(err) {
                 ctx.throw(401)
+                return
             }
 
             // QINIU CLOUD

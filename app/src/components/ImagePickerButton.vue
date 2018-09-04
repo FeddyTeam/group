@@ -34,12 +34,16 @@
             },
             getUploader () {
                 const self = this
+                const authorization = this.$jwt.authorization
+                const headers = new Headers()
+                headers.append('Authorization', authorization)
                 const uploader = new UploaderBuilder()
                     .domain(self.g.qiniu.domains)
                     .multiple(false)
                     .accept(['.png', '.jpg', '.jpeg', '.gif'])
                     .tokenFunc(async (setToken, task) => {
                         const res = await fetch(self.g.qiniu.tokenUrl, {
+                            headers,
                             credentials: 'include'
                         })
                         const json = await res.json()

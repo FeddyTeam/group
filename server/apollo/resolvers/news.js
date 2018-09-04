@@ -1,14 +1,14 @@
 const { News, User, knex } = require('../../db')
-const _ = require('lodash')
+const { isEmpty } = require('lodash')
 
 const check = require('./../../lib/check')
 
 const _fetchNews = async ({ types, type, skip = 0, count = 32 }) => {
 
     let options = {}
-    if (!_.isEmpty(type)) {
+    if (!isEmpty(type)) {
         options = { type }
-    } else if (!_.isEmpty(types)) {
+    } else if (!isEmpty(types)) {
         options = { type: types }
     }
 
@@ -84,7 +84,7 @@ const resolver = {
                 .where({ userId })
                 .fetch()
 
-            if (_.isEmpty) {
+            if (isEmpty) {
                 return 0
             }
 
@@ -121,7 +121,7 @@ const resolver = {
                 .where({ id, userId })
                 .fetch()
 
-            if (_.isEmpty) {
+            if (isEmpty) {
                 return null
             }
 
