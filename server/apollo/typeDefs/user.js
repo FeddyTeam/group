@@ -4,12 +4,15 @@ const User = gql`
     type Query {
         getProfile: Profile
         fetchUsers: [User]
+        fetchUser(id: ID!): User
     }
 
     type Mutation {
         updateProfile(profile: ProfileInput!): Profile
         updatePassword(passwords: PasswordInput!): Boolean
         login(form: LoginInput): LoginResult
+        createUser(user: UserInput!): User
+        updateUser(user: UserUpdateInput!): User
     }
 
     input LoginInput {
@@ -42,17 +45,27 @@ const User = gql`
         avatar: String
         birthday: String
         url: String
+        adm: Boolean
+        cms: Boolean
+        abc: Boolean
     }
 
     input UserInput {
-        id: ID!
-
+        email: String!
+        password: String!
         username: String
-        bio: String
-        avatar: String
+    }
+
+    input UserUpdateInput {
+        id: ID!
+        username: String
+        email: String
         name: String
-        birthday: String
-        url: String
+        password: String
+        status: UserStatus
+        adm: Boolean
+        cms: Boolean
+        abc: Boolean
     }
 
     type Profile {
@@ -68,6 +81,9 @@ const User = gql`
         avatar: String
         birthday: String
         url: String
+        adm: Boolean
+        cms: Boolean
+        abc: Boolean
     }
 
     input ProfileInput {

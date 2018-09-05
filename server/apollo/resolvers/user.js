@@ -1,6 +1,6 @@
 const { User } = require('../../db')
 const cfg = require('dotenv').config().parsed
-const { isEmpty } = require('lodash')
+const { isEmpty, random, pick, isUndefined, omitBy } = require('lodash')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -19,6 +19,26 @@ const resolvers = {
                 }
 
                 const results = await User.fetchAll()
+
+                console.log(results.toJSON())
+
+                return results.toJSON()
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+
+        async fetchUser(root, { id }, ctx, info) {
+            try {
+                const decoded = await check({ ctx, want: 'adm:user_fetch' })
+                const admId = decoded.id
+                if (isEmpty(admId)) {
+                    throw new Error('adm:user_fetch')
+                }
+
+                const results = await User
+                    .where('id', id)
+                    .fetch()
 
                 return results.toJSON()
             } catch (e) {
@@ -45,6 +65,52 @@ const resolvers = {
         }
     },
     Mutation: {
+        async createUser(root, { user: { username, password, email } }, ctx, info) {
+            try {
+                const decoded = await check({ ctx, want: 'adm:user_create' })
+                const admId = decoded.id
+                if (isEmpty(admId)) {
+                    throw new Error('401@adm:user_create')
+                }
+
+                const hashedPassword = await bcrypt.hash(password, 6)
+
+                const _user = await User.forge({
+                    email,
+                    password: hashedPassword,
+                    username: username || `r_${new Date().getTime()}_${random(1000, 10000)}`
+                }).save()
+
+                return _user.toJSON()
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+
+        async updateUser(root, { user }, ctx, info) {
+            try {
+                const decoded = await check({ ctx, want: 'adm:user_create' })
+                const admId = decoded.id
+                if (isEmpty(admId)) {
+                    throw new Error('401@adm:user_update')
+                }
+
+                const { id } = user
+                const _user = await User
+                    .where('id', id)
+                    .fetch()
+
+                let changes = pick(user, ['adm', 'cms', 'abc', 'username', 'name', 'email', 'status'])
+                changes = omitBy(changes, isUndefined)
+
+                await _user.set(changes).save()
+
+                return _user.toJSON()
+            } catch (e) {
+                throw new Error(e)
+            }
+        },
+
         async updateProfile(root, { profile }, ctx, info) {
             try {
                 const { id } = await check({ ctx })
@@ -116,8 +182,10 @@ const resolvers = {
                     throw new Error('wrong_password@login')
                 }
 
+                const { lgd=1, adm=0, cms=0, abc=0  } = user
+
                 const token = jwt.sign({
-                    id: user.id, keys: {abc:1, cms:1, rss:1, adm:1}
+                    id: user.id, keys: { lgd, abc, cms, adm }
                 }, cfg.JWT_SECRET, {
                     expiresIn: '1d'
                 })

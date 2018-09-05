@@ -22,7 +22,10 @@ exports.seed = function (knex, Promise) {
         url: 'https://note.zerok.net',
         birthday: '1995-04-03',
         createdAt: new Date('2018-08-24 16:00:00 +0800'),
-        updatedAt: new Date('2018-09-01 12:57:20 +0800')
+        updatedAt: new Date('2018-09-01 12:57:20 +0800'),
+        adm: true,
+        cms: true,
+        abc: true
     }, {
         id: uuid_of_nano,
         username: 'nano',
@@ -34,7 +37,9 @@ exports.seed = function (knex, Promise) {
         url: '',
         birthday: '2011-03-07',
         createdAt: new Date('2018-08-26 16:00:00 +0800'),
-        updatedAt: new Date('2018-08-31 20:15:00 +0800')
+        updatedAt: new Date('2018-08-31 20:15:00 +0800'),
+        cms: true,
+        abc: true
     }])
 
     const promiseBubbles = knex('bubbles').del().insert([{

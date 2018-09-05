@@ -7,11 +7,6 @@ const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 
 module.exports = function ({ cfg }) {
-    // const auth = passport.authenticate('local', {
-    //     successRedirect: '/',
-    //     failureRedirect: '/login'
-    // })
-
     return router
         .get('/', async ctx => {
             await ctx.render('index')
@@ -73,9 +68,12 @@ module.exports = function ({ cfg }) {
                     throw new Error('JWT: Bearer type not found')
                 }
 
+                console.info(token, cfg.JWT_SECRET)
+
                 await jwt.verify(token, cfg.JWT_SECRET)
             } catch(err) {
-                ctx.throw(401)
+                ctx.status = 401
+                ctx.body = { message: err.message }
                 return
             }
 

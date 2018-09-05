@@ -56,7 +56,7 @@ export default class JwtMgr {
     }
 
     get keys () {
-        return this.payload.keys || null
+        return this.payload.keys || {}
     }
 
     get token () {
@@ -75,6 +75,10 @@ export default class JwtMgr {
     }
 
     setToken (token) {
+        if (!token) {
+            this.clear()
+            return
+        }
         const payload = _parsetToken(token)
         this._token = token
         this._raw = token

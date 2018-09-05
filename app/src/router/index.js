@@ -23,7 +23,6 @@ const jwt = new JwtMgr()
 const NO_KEYS = []
 const ABC_KEYS = ['abc']
 const CMS_KEYS = ['adm', 'cms']
-const RSS_KEYS = ['rss', 'cms']
 const ADM_KEYS = ['adm']
 
 const lock = (keys) => {
@@ -35,11 +34,10 @@ const lock = (keys) => {
 }
 
 const need = {
-    none: lock(NO_KEYS),
     abc: lock(ABC_KEYS),
     cms: lock(CMS_KEYS),
     adm: lock(ADM_KEYS),
-    rss: lock(RSS_KEYS)
+    lgd: lock(NO_KEYS)
 }
 
 const unlock = (lock, keys) => {
@@ -103,11 +101,7 @@ const router = new Router({
             component: AdminUsers
         }, {
             ...need.adm,
-            path: '/manage/users/edit',
-            component: UserEditor
-        }, {
-            ...need.adm,
-            path: '/manage/users/edit/:id',
+            path: '/manage/users/:id',
             component: UserEditor
         }]
     }, {
@@ -170,7 +164,7 @@ router.beforeEach((to, from, next) => {
     const { lock } = to.meta
 
     if (lock) {
-        if (!jwt.keys) {
+        if (!jwt.lgd) {
             next(false)
         }
 

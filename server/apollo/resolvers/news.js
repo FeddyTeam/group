@@ -1,6 +1,6 @@
-const { News, User, knex } = require('../../db')
 const { isEmpty } = require('lodash')
 
+const { News, User, knex } = require('../../db')
 const check = require('./../../lib/check')
 
 const _fetchNews = async ({ types, type, skip = 0, count = 32 }) => {
@@ -60,86 +60,102 @@ const resolver = {
     },
     Mutation: {
         async createNews(root, { news }, ctx, info) {
-            const { id } = await check({ ctx, want: 'cms_create' })
-            if (isEmpty(id)) {
-                throw new Error('401@cms_create')
+            try {
+                const decoded = await check({ ctx, want: 'cms_create' })
+                const userId = decoded.id
+                if (isEmpty(userId)) {
+                    throw new Error('401@cms_create')
+                }
+
+                const _news = await News.forge({
+                    ...news,
+                    userId
+                }).save()
+
+                return _news.toJSON()
+            } catch (e) {
+                throw new Error(e)
             }
-
-            const _news = await News.forge({
-                ...news,
-                userId: id
-            }).save()
-
-            return _news.toJSON()
         },
         async deleteNews(root, { ids }, ctx, info) {
-            const { id } = await check({ ctx, want: 'cms_delete' })
-            if (isEmpty(id)) {
-                throw new Error('401@cms_create')
+            try {
+                const decoded = await check({ ctx, want: 'cms_delete' })
+                const userId = decoded.id
+                if (isEmpty(userId)) {
+                    throw new Error('401@cms_delete')
+                }
+
+                const _news = await News
+                    .whereIn('id', ids)
+                    .where({ userId: id })
+                    .fetch()
+
+                if (isEmpty(_news)) {
+                    return 0
+                }
+
+                await _news.set({ status: 'deleted' }).save()
+
+                console.info(_news, 'item(s) deleted.')
+
+                return 10086
+            } catch (e) {
+                throw new Error(e)
             }
-
-            const userId = ctx.state.user.id
-            const _news = await News
-                .whereIn('id', ids)
-                .where({ userId })
-                .fetch()
-
-            if (isEmpty) {
-                return 0
-            }
-
-            await _news.set({ status: 'deleted' }).save()
-
-            console.info(_news, 'item(s) deleted.')
-
-            return 10086
         },
         async permanentlyDeleteNews(root, { ids }, ctx, info) {
-            const { id } = await check({ ctx, want: 'cms_delete' })
-            if (isEmpty(id)) {
-                throw new Error('401@cms_create')
+            try {
+                const decoded = await check({ ctx, want: 'cms_delete' })
+                const userId = decoded.id
+                if (isEmpty(userId)) {
+                    throw new Error('401@cms_delete')
+                }
+
+                const _news = await knex('news')
+                    .whereIn('id', ids)
+                    .where({ userId })
+                    .del()
+
+                return _news
+            } catch (e) {
+                throw new Error(e)
             }
-
-            const userId = ctx.state.user.id
-            const _news = await knex('news')
-                .whereIn('id', ids)
-                .where({ userId })
-                .del()
-
-            return _news
         },
         async updateNews(root, { news }, ctx, info) {
-            const { id } = await check({ ctx, want: 'cms_update' })
-            if (isEmpty(id)) {
-                throw new Error('401@cms_create')
+            try {
+                const decoded = await check({ ctx, want: 'cms_update' })
+                const userId = decoded.id
+                if (isEmpty(userId)) {
+                    throw new Error('401@cms_update')
+                }
+
+                const id = news.id
+                const _news = await News
+                    .where({ id, userId })
+                    .fetch()
+
+                if (isEmpty(_news)) {
+                    throw new Error('News Not Found@cms_update')
+                }
+
+                const {
+                    title, altTitle, content, link,
+                    image, altImage, thumbnail,
+                    color, icon, level, weight,
+                    activedAt, expiredAt, data, status
+                } = news
+
+                await _news.set({
+                    title, altTitle, content, link,
+                    image, altImage, thumbnail,
+                    color, icon, level, weight,
+                    activedAt, expiredAt, data, status
+                }).save()
+
+                return _news.toJSON()
+            } catch (e) {
+                throw new Error(e)
             }
-
-            const userId = ctx.state.user.id
-            const id = news.id
-
-            const _news = await News
-                .where({ id, userId })
-                .fetch()
-
-            if (isEmpty) {
-                return null
-            }
-
-            const {
-                title, altTitle, content, link,
-                image, altImage, thumbnail,
-                color, icon, level, weight,
-                activedAt, expiredAt, data, status
-            } = news
-
-            await _news.set({
-                title, altTitle, content, link,
-                image, altImage, thumbnail,
-                color, icon, level, weight,
-                activedAt, expiredAt, data, status
-            }).save()
-
-            return _news.toJSON()
         }
     }
 }

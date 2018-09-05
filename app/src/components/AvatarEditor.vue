@@ -26,6 +26,10 @@
         props: ['url', 'set-url'],
         methods: {
             getUploader () {
+                const self = this
+                const authorization = this.$jwt.authorization
+                const headers = new Headers()
+                headers.append('Authorization', authorization)
                 const uploader = new UploaderBuilder()
                     .domain({
                         'https': 'https://upload-z2.qiniup.com',
@@ -35,6 +39,7 @@
                     .accept(['.png', '.jpg', '.jpeg', '.gif'])
                     .tokenFunc(async (setToken, task) => {
                         const res = await fetch('http://localhost:3000/k/qiniu', {
+                            headers,
                             credentials: 'include'
                         })
                         const json = await res.json()
