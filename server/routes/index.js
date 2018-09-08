@@ -1,17 +1,89 @@
 const Router = require('koa-router')
 const router = new Router()
-const { User } = require('../db')
+const { User, News, knex } = require('../db')
 const bcrypt = require('bcrypt')
 const qiniu = require('qiniu')
 const jwt = require('jsonwebtoken')
-const _ = require('lodash')
+const { isEmpty, groupBy } = require('lodash')
+const util = require('util')
 
-const Parser = require('rss-parser')
+const parseFeed = require('../lib/feed')
+
+function insertOrUpdate(tableName, items) {
+    return knex.transaction(trx => {
+        const queries = items.map(tuple =>
+            trx.raw(util.format('%s ON DUPLICATE KEY UPDATE %s',
+                trx(tableName).insert(tuple).toString().toString(),
+                trx(tableName).update(tuple).whereRaw(`'${tableName}'.id = '${tuple.id}'`)
+                    .toString()
+                    .replace(/^update\s.*\sset/i, '')
+                    .replace(/where\s.*\s.*$/i, '')
+            )).transacting(trx)
+        )
+
+        return Promise.all(queries).then(trx.commit).catch(trx.rollback)
+    })
+}
 
 module.exports = function ({ cfg }) {
     return router
         .get('/', async ctx => {
-            await ctx.render('index')
+
+            const _results = await News
+                .where('status', '=', 'actived')
+                .where('level', '!=', 'removed')
+                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert'])
+                .orderBy('-createdAt')
+                .fetchAll()
+
+            const results = groupBy(_results.toJSON(), 'type')
+
+            console.log(results)
+
+            // ctx.body = results.toJSON()
+            await ctx.render('index', {
+                news: results,
+                key: 111111
+            })
+        })
+        .get('/r1', async ctx => {
+
+            const _results = await News
+                .where('status', '=', 'actived')
+                .where('level', '!=', 'removed')
+                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert'])
+                .orderBy('-createdAt')
+                .fetchAll()
+
+            ctx.body = _results.toJSON()
+        })
+        .get('/check-rss', async ctx => {
+            try {
+                const posts = await parseFeed('https://blog.feddy.org/rss')
+                const user = await User
+                    .where({ status: 'actived', cms: true, adm: true })
+                    .fetch()
+
+                const userId = user.toJSON().id
+
+                const  items = posts.map(one => {
+                    return {
+                        ...one,
+                        userId
+                    }
+                })
+
+                // const news = await knex('news').insert(items)
+                await insertOrUpdate('news', items)
+
+                ctx.body = {
+                    message: 'success'
+                }
+            } catch (err) {
+                console.log(err)
+                ctx.status = 500
+                ctx.body = err.message
+            }
         })
         .get('/login', async ctx => {
             await ctx.render('login')
@@ -25,7 +97,7 @@ module.exports = function ({ cfg }) {
             const { username, password } = ctx.request.body
             try {
                 const _user = await User.where('email', username).fetch()
-                if (_.isEmpty(_user)) {
+                if (isEmpty(_user)) {
                     ctx.body = { message: 'User not found' }
                     ctx.status = 401
                     return

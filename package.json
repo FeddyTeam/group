@@ -18,6 +18,7 @@
     "bookshelf": "^0.13.3",
     "bookshelf-uuid": "^1.0.0",
     "dotenv": "^6.0.0",
+    "feedparser": "^2.2.9",
     "graphql": "^0.13.2",
     "graphql-tools": "^3.1.1",
     "jsonwebtoken": "^8.3.0",
@@ -34,11 +35,9 @@
     "lodash": "^4.17.10",
     "mysql": "^2.16.0",
     "mysql2": "^1.6.1",
-    "node-podcast-parser": "^2.3.0",
     "passport-local": "^1.0.0",
     "pug": "^2.0.3",
     "qiniu": "^7.2.1",
-    "rss-parser": "^3.4.3",
     "uuid": "^3.3.2"
   },
   "devDependencies": {}

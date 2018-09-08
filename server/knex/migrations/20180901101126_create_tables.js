@@ -46,7 +46,7 @@ exports.up = function (knex, Promise) {
         table.uuid('id').primary().unique()
         table.string('title').notNullable()
         table.string('altTitle')
-        table.string('content')
+        table.text('content')
         table.string('image')
         table.string('altImage')
         table.string('thumbnail')
