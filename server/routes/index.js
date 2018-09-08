@@ -6,6 +6,8 @@ const qiniu = require('qiniu')
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
 
+const Parser = require('rss-parser')
+
 module.exports = function ({ cfg }) {
     return router
         .get('/', async ctx => {
@@ -51,6 +53,23 @@ module.exports = function ({ cfg }) {
                 console.info(e)
                 ctx.body = { message: 'Unknown error' }
                 ctx.status = 500
+            }
+        })
+        .get('/rss', async ctx => {
+            const parser = new Parser()
+
+            try {
+                const feed = await parser.parseURL('https://note.zerook.net/rss')
+                console.log(feed.title)
+
+                feed.items.forEach(item => {
+                  console.log(item.title + ':' + item.link)
+                })
+
+                ctx.body = feed
+            } catch (err) {
+                console.log(err.message)
+                ctx.body = err.message
             }
         })
         .get('/k/qiniu', async ctx => {

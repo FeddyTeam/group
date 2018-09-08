@@ -30,13 +30,13 @@ app.use(views(__dirname + '/views', {
 }))
 
 // CORS : Development Only
-app.use(async (ctx, next) => {
-    ctx.set('Access-Control-Allow-Origin', 'http://localhost:8080')
-    ctx.set('Access-Control-Allow-Credentials', true)
-    ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
-    ctx.set('Access-Control-Allow-Methods', 'POST, OPTIONS, PUT, GET')
-    await next()
-})
+// app.use(async (ctx, next) => {
+//     ctx.set('Access-Control-Allow-Origin', 'http://localhost:8080')
+//     ctx.set('Access-Control-Allow-Credentials', true)
+//     ctx.set('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+//     ctx.set('Access-Control-Allow-Methods', 'POST, OPTIONS, PUT, GET')
+//     await next()
+// })
 
 // SESSION
 const session = require('koa-session')

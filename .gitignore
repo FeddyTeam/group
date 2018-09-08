@@ -66,3 +66,5 @@ app/node_modules
 # knex configs
 server/knex/knexfile.js
 
+*.map
+

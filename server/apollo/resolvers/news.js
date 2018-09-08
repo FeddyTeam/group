@@ -130,6 +130,10 @@ const resolver = {
                 }
 
                 const id = news.id
+                if (isEmpty(id)) {
+                    throw new Error('Id is required@cms_update')
+                }
+
                 const _news = await News
                     .where({ id, userId })
                     .fetch()
