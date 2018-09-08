@@ -1,4 +1,7 @@
-const config = require('../knex/knexfile.js')[process.env.NODE_ENV || 'development']
+const path = require('path')
+const { KNEX_TAG } = process.env
+const knexFilename = KNEX_TAG ? `knexfile.${KNEX_TAG}.js` : 'knexfile.js'
+const config = require(path.join(__dirname, `../knex/${knexFilename}`))[process.env.NODE_ENV || 'development']
 
 const knex = require('knex')(config)
 
