@@ -1,4 +1,4 @@
-const config = require('../knex/knexfile')[process.env.NODE_ENV || 'development']
+const config = require('../knex/knexfile.js')[process.env.NODE_ENV || 'development']
 
 const knex = require('knex')(config)
 
