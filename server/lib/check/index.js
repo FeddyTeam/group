@@ -1,4 +1,4 @@
-const { JWT_SECRET } = require('dotenv').config().parsed
+const { JWT_SECRET } = process.env
 const jwt = require('jsonwebtoken')
 
 module.exports = async ({ ctx, want }) => {

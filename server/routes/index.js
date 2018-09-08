@@ -25,14 +25,14 @@ function insertOrUpdate(tableName, items) {
     })
 }
 
-module.exports = function ({ cfg }) {
+module.exports = function () {
     return router
         .get('/', async ctx => {
 
             const _results = await News
                 .where('status', '=', 'actived')
                 .where('level', '!=', 'removed')
-                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert'])
+                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert', 'project'])
                 .orderBy('-createdAt')
                 .fetchAll()
 
@@ -51,7 +51,7 @@ module.exports = function ({ cfg }) {
             const _results = await News
                 .where('status', '=', 'actived')
                 .where('level', '!=', 'removed')
-                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert'])
+                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert', 'project'])
                 .orderBy('-createdAt')
                 .fetchAll()
 
@@ -94,6 +94,7 @@ module.exports = function ({ cfg }) {
         })
         // .post('/login', auth)
         .post('/login_ajax', async ctx => {
+            const { JWT_SECRET } = process.env
             const { username, password } = ctx.request.body
             try {
                 const _user = await User.where('email', username).fetch()
@@ -116,7 +117,7 @@ module.exports = function ({ cfg }) {
                 const id = user.id
                 const token = jwt.sign({
                     id, keys: {adm:1,cms:1,abc:1,rss:1}
-                }, cfg.JWT_SECRET, {
+                }, JWT_SECRET, {
                     expiresIn: '1d'
                 })
 
@@ -145,6 +146,8 @@ module.exports = function ({ cfg }) {
             }
         })
         .get('/k/qiniu', async ctx => {
+            const { JWT_SECRET, QINIU_ACCESS_KEY, QINIU_SECRET_KEY, QINIU_BUCKET } = process.env
+
             try {
                 const authorization = ctx.request.header.authorization
                 if (!authorization) {
@@ -159,9 +162,9 @@ module.exports = function ({ cfg }) {
                     throw new Error('JWT: Bearer type not found')
                 }
 
-                console.info(token, cfg.JWT_SECRET)
+                console.info(token, JWT_SECRET)
 
-                await jwt.verify(token, cfg.JWT_SECRET)
+                await jwt.verify(token, JWT_SECRET)
             } catch(err) {
                 ctx.status = 401
                 ctx.body = { message: err.message }
@@ -169,9 +172,9 @@ module.exports = function ({ cfg }) {
             }
 
             // QINIU CLOUD
-            const qiniuMac = new qiniu.auth.digest.Mac(cfg.QINIU_ACCESS_KEY, cfg.QINIU_SECRET_KEY)
+            const qiniuMac = new qiniu.auth.digest.Mac(QINIU_ACCESS_KEY, QINIU_SECRET_KEY)
             const putPolicy = new qiniu.rs.PutPolicy({
-                scope: cfg.QINIU_BUCKET
+                scope: QINIU_BUCKET
             })
 
             const uploadToken = putPolicy.uploadToken(qiniuMac)

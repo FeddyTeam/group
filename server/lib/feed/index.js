@@ -1,6 +1,6 @@
 const FeedParser = require('feedparser')
 const axios = require('axios')
-const { pick, get } = require('lodash')
+const { get } = require('lodash')
 
 function parseFeed(url) {
     const feedparser = new FeedParser()

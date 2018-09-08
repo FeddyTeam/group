@@ -1,5 +1,4 @@
-const { merge, isEmpty } = require('lodash')
-const { User } = require('../../db')
+const { merge } = require('lodash')
 
 const user = require('./user')
 const bubble = require('./bubble')

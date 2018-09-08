@@ -1,4 +1,4 @@
-const cfg = require('dotenv').config().parsed
+require('dotenv').config()
 const Koa = require('koa')
 const logger = require('koa-logger')
 const favicon = require('koa-favicon')
@@ -8,7 +8,7 @@ const schema = require('./apollo')
 const server = new ApolloServer(schema)
 const path = require('path')
 
-// const jwt = require('koa-jwt')
+const { SERVER_PORT } = process.env
 
 // APP
 const app = new Koa()
@@ -56,9 +56,7 @@ app.use(bodyParser())
 app.use(static('./server/public'))
 
 // ROUTES
-const router = require('./routes')({
-    cfg
-})
+const router = require('./routes')()
 app
     .use(router.routes())
     .use(router.allowedMethods())
@@ -66,6 +64,6 @@ app
 server.applyMiddleware({ app, path: '/graphql'})
 
 // SERVER UP
-app.listen(cfg.SERVER_PORT, () => {
-    console.info(`>>>>>> Server Up at ${cfg.SERVER_PORT} <<<<<<`)
+app.listen(SERVER_PORT, () => {
+    console.info(`>>>>>> Server Up at ${SERVER_PORT} <<<<<<`)
 })

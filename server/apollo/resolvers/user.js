@@ -1,5 +1,5 @@
 const { User } = require('../../db')
-const cfg = require('dotenv').config().parsed
+const { JWT_SECRET } = process.env
 const { isEmpty, random, pick, isUndefined, omitBy } = require('lodash')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -186,7 +186,7 @@ const resolvers = {
 
                 const token = jwt.sign({
                     id: user.id, keys: { lgd, abc, cms, adm }
-                }, cfg.JWT_SECRET, {
+                }, JWT_SECRET, {
                     expiresIn: '1d'
                 })
 
