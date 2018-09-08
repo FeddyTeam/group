@@ -8,7 +8,7 @@ const schema = require('./apollo')
 const server = new ApolloServer(schema)
 const path = require('path')
 
-const { SERVER_PORT } = process.env
+const { PORT } = process.env
 
 // APP
 const app = new Koa()
@@ -64,6 +64,6 @@ app
 server.applyMiddleware({ app, path: '/graphql'})
 
 // SERVER UP
-app.listen(SERVER_PORT, () => {
-    console.info(`>>>>>> Server Up at ${SERVER_PORT} <<<<<<`)
+app.listen(PORT, () => {
+    console.info(`>>>>>> Server Up at ${PORT} <<<<<<`)
 })
