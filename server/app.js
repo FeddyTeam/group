@@ -64,6 +64,6 @@ app
 server.applyMiddleware({ app, path: '/graphql'})
 
 // SERVER UP
-app.listen(PORT, () => {
-    console.info(`>>>>>> Server Up at ${PORT} <<<<<<`)
+app.listen(PORT || 3000, () => {
+    console.info(`>>>>>> Server Up at ${PORT || 3000} <<<<<<`)
 })

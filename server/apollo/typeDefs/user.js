@@ -65,7 +65,8 @@ const User = gql`
         status: UserStatus
         adm: Boolean
         cms: Boolean
-        abc: Boolean
+        abc: Boolean,
+        avatar: String
     }
 
     type Profile {

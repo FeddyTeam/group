@@ -78,7 +78,8 @@ const resolvers = {
                 const _user = await User.forge({
                     email,
                     password: hashedPassword,
-                    username: username || `r_${new Date().getTime()}_${random(1000, 10000)}`
+                    username: username || `r_${new Date().getTime()}_${random(1000, 10000)}`,
+                    avatar: 'https://static.feddy.org/avatar.jpg'
                 }).save()
 
                 return _user.toJSON()
@@ -100,7 +101,7 @@ const resolvers = {
                     .where('id', id)
                     .fetch()
 
-                let changes = pick(user, ['adm', 'cms', 'abc', 'username', 'name', 'email', 'status'])
+                let changes = pick(user, ['adm', 'cms', 'abc', 'username', 'name', 'email', 'status', 'avatar'])
                 changes = omitBy(changes, isUndefined)
 
                 await _user.set(changes).save()
