@@ -6,31 +6,36 @@ const { groupBy } = require('lodash')
 module.exports = function () {
     return router
         .get('/', async ctx => {
-
-            const _results = await News
+            const _base = await News
                 .where('status', '=', 'actived')
-                .where('level', '!=', 'removed')
-                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert', 'project'])
+                .where('level', 'in', ['normal', 'featured'])
+                .where('type', 'in', ['news', 'event', 'notice', 'alert', 'project'])
                 .orderBy('-createdAt')
                 .fetchAll()
 
-            const results = groupBy(_results.toJSON(), 'type')
-
-            console.log(results)
-
-            await ctx.render('index', {
-                news: results,
-                key: 111111
-            })
-        })
-        .get('/r1', async ctx => {
-            const _results = await News
+            const _posts = await News
                 .where('status', '=', 'actived')
-                .where('level', '!=', 'removed')
-                .where('type', 'in', ['news', 'post', 'event', 'notice', 'alert', 'project'])
+                .where('level', 'in', ['normal', 'featured'])
+                .where('type', 'post')
                 .orderBy('-createdAt')
                 .fetchAll()
 
-            ctx.body = _results.toJSON()
+            const _mustreads = await News
+                .where('status', '=', 'actived')
+                .where('level', 'mustread')
+                .orderBy('-createdAt')
+                .fetchAll()
+
+            const post = _posts.toJSON()
+            const mustread = _mustreads.toJSON()
+            const base = _base.toJSON()
+
+            const results = {
+                ...groupBy(base, 'type'),
+                post,
+                mustread
+            }
+
+            await ctx.render('index', results)
         })
 }

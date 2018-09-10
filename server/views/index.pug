@@ -9,38 +9,41 @@ block main
     //- .screen.full-screen.center
     //-     h1 Feddy Group
 
-    if news.post
+    if post
+        h4 Posts
         .box
-            for post in news.post
+            for item in post.slice(0, 4)
                 p
-                    span POST:&nbsp;
-                    a(href=post.link)= post.title
+                    strong= item.level === 'featured' ? '⭐' : ''
+                    a(href=item.link)= item.title
                     small &nbsp;by&nbsp;
-                    span= post.altTitle
+                    span= item.altTitle
 
-    if news.news
+    if mustread
+        h4 Mustreads
         .box
-            for post in news.news
+            for item in mustread.slice(0, 4)
                 p
-                    span NEWS:&nbsp;
-                    a(href=post.link)= post.title
+                    a(href=item.link)= item.title
                     small &nbsp;by&nbsp;
-                    span= post.altTitle
+                    span= item.altTitle
 
-    if news.event
+    if event
+        h4 Events
         .box
-            for post in news.event
+            for item in event.slice(0, 4)
                 p
-                    span EVENT:&nbsp;
-                    a(href=post.link)= post.title
+                    strong= item.level === 'featured' ? '⭐' : ''
+                    a(href=item.link)= item.title
                     small &nbsp;by&nbsp;
-                    span= post.altTitle
+                    span= item.altTitle
 
-    if news.notice
+    if notice
+        h4 Notices
         .box
-            for post in news.event
+            for item in notice.slice(0, 4)
                 p
-                    span NOTICE:&nbsp;
-                    a(href=post.link)= post.title
+                    strong= item.level === 'featured' ? '⭐' : ''
+                    a(href=item.link)= item.title
                     small &nbsp;by&nbsp;
-                    span= post.altTitle
+                    span= item.altTitle

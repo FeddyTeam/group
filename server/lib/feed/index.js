@@ -47,7 +47,7 @@ function parseFeed(url) {
 
                     link,
                     color: '#ffffff',
-                    id: `feddy:${guid}`
+                    id: `feddy_${guid}`
                 }
 
                 results.push(post)
