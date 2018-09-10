@@ -1,10 +1,8 @@
 const { isEmpty } = require('lodash')
-
 const { News, User, knex } = require('../../db')
 const check = require('./../../lib/check')
 
 const _fetchNews = async ({ types, type, skip = 0, count = 32 }) => {
-
     let options = {}
     if (!isEmpty(type)) {
         options = { type }
