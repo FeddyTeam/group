@@ -82,6 +82,9 @@ const resolvers = {
                     avatar: 'https://static.feddy.org/avatar.jpg'
                 }).save()
 
+                const id = _user.get('id')
+                await _user.clear().set('id', id).fetch()
+
                 return _user.toJSON()
             } catch (e) {
                 throw new Error(e)
