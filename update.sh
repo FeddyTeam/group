@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd /var/www/home/group
+
 git pull
 
 yarn
