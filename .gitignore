@@ -68,3 +68,6 @@ server/knex/knexfile.js
 
 *.map
 
+server/public/dashboard
+app
+
