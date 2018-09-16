@@ -1,6 +1,8 @@
 FROM node:8
 
-ADD . /var/www/node
+VOLUME /var/www/node
+
+# COPY . /var/www/node
 WORKDIR /var/www/node
 
 ENV NODE_ENV testing
