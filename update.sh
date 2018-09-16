@@ -2,6 +2,8 @@
 
 git pull
 
-docker-compose down
+yarn
+
 docker-compose build
+docker-compose down
 docker-compose up -d

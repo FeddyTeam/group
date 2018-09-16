@@ -8,7 +8,7 @@ WORKDIR /var/www/node
 ENV NODE_ENV testing
 ENV PORT 3200
 
-RUN npm install
+# RUN npm install
 
 CMD ["node", "server/app.js"]
 
